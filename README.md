@@ -6,6 +6,10 @@ Download D4RL and Minari:
  - clone D4RL https://github.com/Farama-Foundation/D4RL
  - Setup separate dependencies, e.g, conda environment for each repo
 
+```
+cd 4rl_mujoco_minari
+```
+
 Activate D4RL environment and run:
 ```bash
 python mujoco_d4rl_to_pkl.py --dir={save_dir}
