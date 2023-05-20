@@ -19,6 +19,8 @@ python mujoco_pkl_to_minari.py --dir={save_dir}
 ```
 Where author, author_email, code_permalink can be added optionally.
 
+<!-- python mujoco_pkl_to_minari.py  --author "Daniel Lawson" --author_email daniellawson9999@gmail.com -->
+
 
 Test loading new environments:
 
