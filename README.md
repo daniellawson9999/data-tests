@@ -1,5 +1,6 @@
+Experimenting with Minari, through importing with older D4RL datasets (tested in Python 3.10.11).
+
 ## Port D4RL MuJoCo to Minari
-(tested in Python 3.10.11)
 
 Download D4RL and Minari:
  - clone https://github.com/Farama-Foundation/Minari
