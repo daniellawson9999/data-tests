@@ -1,4 +1,4 @@
-Experimenting with Minari, through importing with older D4RL datasets (tested in Python 3.10.11).
+Experimenting with Minari, through importing older D4RL datasets (tested in Python 3.10.11).
 
 ## Port D4RL MuJoCo to Minari
 
