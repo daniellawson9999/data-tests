@@ -2,6 +2,8 @@ import gymnasium as gym
 import minari
 import numpy as np
 
+import tqdm
+
 import pickle
 import collections
 import argparse
@@ -46,27 +48,32 @@ def convert_file(game, dataset_type, seed, args):
     dataset_name = f'{game}-{dataset_type}-v{seed}'
     data_path = os.path.join(args.dir, f'{dataset_name}.npz')
 
+    # load memory-mapped file
     np_dataset = np.load(data_path)
-    dataset = {}
-    for k in np_dataset.keys():
-        dataset[k] = np_dataset[k]
+    #import pdb; pdb.set_trace()
+    # dataset = {}
+    # for k in np_dataset.keys():
+    #     dataset[k] = np_dataset[k]
     
-    N = dataset['rewards'].shape[0]
+    N = np_dataset['rewards'].shape[0]
     data_ = collections.defaultdict(list)
-
     trajectories = []
-    for i in range(N):
-        done = bool(dataset['terminals'][i])
+
+    start_index = 0
+    #import pdb; pdb.set_trace()
+    for i in tqdm.tqdm(range(N)):
+        done = bool(np_dataset['terminals'][i])
     
-        for k in ['observations', 'actions', 'rewards', 'terminals']:
-            data_[k].append(dataset[k][0])
-            dataset[k] = np.delete(dataset[k], 0)
-            #import pdb; pdb.set_trace()
+        # for k in ['observations', 'actions', 'rewards', 'terminals']:
+        #     data_[k].append(dataset[k][0])
+        #     temp = dataset[k][1:]
+        #     del dataset[k]
+        #     dataset[k] = temp
 
         if done:
             episode_data = {}
-            episode_data['actions'] = np.array(data_['actions'])
-            episode_data['rewards'] = np.array(data_['rewards'])
+            episode_data['actions'] = np_dataset['actions'][start_index:i+1]#np.array(data_['actions'])
+            episode_data['rewards'] = np_dataset['rewards'][start_index:i+1]#np.array(data_['rewards'])
 
             ep_len = len(episode_data['rewards'])
             if ep_len < max_episode_steps:
@@ -80,13 +87,14 @@ def convert_file(game, dataset_type, seed, args):
             truncations[-1] = timeout
             episode_data['terminations'] = terminations
             episode_data['truncations'] = truncations
-            
-            episode_data['observations'] = np.array(data_['observations'])
+
+            episode_data['observations'] = np_dataset['observations'][start_index:i+1]#np.array(data_['observations'])
             # add extra next observatition, is a dummy value
             episode_data['observations'] = np.concatenate([episode_data['observations'], np.expand_dims(episode_data['observations'][-1],axis=0)], axis=0)
 
             trajectories.append(episode_data)
-            data_ = collections.defaultdict(list)
+            start_index = i + 1
+            #data_ = collections.defaultdict(list)
 
     import pdb; pdb.set_trace()
     env_game_name = convert_name(game)
