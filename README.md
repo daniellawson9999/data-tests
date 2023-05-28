@@ -39,3 +39,26 @@ env = dataset.recover_environment() # Deprecated HalfCheetah-v3 environment
 # Sample an episode
 episode = dataset.sample_episodes(n_episodes=1)[0]
 ```
+
+
+## Port Atari  to Minari
+in progress
+
+Download D4RL and Minari:
+ - clone https://github.com/Farama-Foundation/Minari (do not have to clone again if already followed setup in previous step)
+ - clone Atari https://github.com/takuseno/d4rl-atari
+ - Setup separate dependencies, e.g, conda environment for each repo
+ - in Atari environment, run: `pip install gym[atari]`, `pip install gym[accept-rom-license]`
+
+
+Activate Atari environment and run:
+```bash
+python atari_to_pkl.py --dir={save_dir}
+```
+where save_dir is the directory to store D4RL .npz files.
+
+
+Converting to Minari is in progress, currently resoling memory issues:
+To test, activate Minari environment and run:
+```bash
+python atari_pkl_to_minari.py.py --dir={save_dir}
