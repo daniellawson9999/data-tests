@@ -51,9 +51,9 @@ def convert_file(game, dataset_type, seed, args):
     # load memory-mapped file
     np_dataset = np.load(data_path)
     #import pdb; pdb.set_trace()
-    # dataset = {}
-    # for k in np_dataset.keys():
-    #     dataset[k] = np_dataset[k]
+    dataset = {}
+    for k in np_dataset.keys():
+        dataset[k] = np_dataset[k]
     
     N = np_dataset['rewards'].shape[0]
     data_ = collections.defaultdict(list)
@@ -62,7 +62,7 @@ def convert_file(game, dataset_type, seed, args):
     start_index = 0
     #import pdb; pdb.set_trace()
     for i in tqdm.tqdm(range(N)):
-        done = bool(np_dataset['terminals'][i])
+        done = bool(dataset['terminals'][i])
     
         # for k in ['observations', 'actions', 'rewards', 'terminals']:
         #     data_[k].append(dataset[k][0])
@@ -72,8 +72,8 @@ def convert_file(game, dataset_type, seed, args):
 
         if done:
             episode_data = {}
-            episode_data['actions'] = np_dataset['actions'][start_index:i+1]#np.array(data_['actions'])
-            episode_data['rewards'] = np_dataset['rewards'][start_index:i+1]#np.array(data_['rewards'])
+            episode_data['actions'] = dataset['actions'][start_index:i+1]#np.array(data_['actions'])
+            episode_data['rewards'] = dataset['rewards'][start_index:i+1]#np.array(data_['rewards'])
 
             ep_len = len(episode_data['rewards'])
             if ep_len < max_episode_steps:
@@ -88,13 +88,24 @@ def convert_file(game, dataset_type, seed, args):
             episode_data['terminations'] = terminations
             episode_data['truncations'] = truncations
 
-            episode_data['observations'] = np_dataset['observations'][start_index:i+1]#np.array(data_['observations'])
+            episode_data['observations'] = dataset['observations'][start_index:i+1]#np.array(data_['observations'])
+            #episode_data['observations'] = np.concatenate([dataset['observations'][start_index:i+1], np.expand_dims(dataset['observations'][i],axis=0)], axis=0)
             # add extra next observatition, is a dummy value
-            episode_data['observations'] = np.concatenate([episode_data['observations'], np.expand_dims(episode_data['observations'][-1],axis=0)], axis=0)
+            #episode_data['observations'] = np.concatenate([episode_data['observations'], np.expand_dims(episode_data['observations'][-1],axis=0)], axis=0)
 
             trajectories.append(episode_data)
             start_index = i + 1
             #data_ = collections.defaultdict(list)
+    for key in list(dataset.keys()):
+        del dataset[key]
+    del dataset
+    import pdb; pdb.set_trace()
+    # padd observations
+    for i in range(len(trajectories)):
+        ep_data = trajectories[i]
+        temp = np.concatenate([ep_data['observations'], np.expand_dims(ep_data['observations'][-1],axis=0)], axis=0)
+        del trajectories[i]['observations']
+        trajectories[i]['observations'] = temp
 
     import pdb; pdb.set_trace()
     env_game_name = convert_name(game)
