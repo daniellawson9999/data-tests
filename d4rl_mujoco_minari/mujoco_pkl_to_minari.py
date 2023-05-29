@@ -20,9 +20,9 @@ def convert_files(args):
     # convet each dataset
     for env_name in envs:
         for dataset_type in dataset_types:
-            convert_file(env_name, dataset_type)
+            convert_file(env_name, dataset_type, args)
 
-def convert_file(env_name, dataset_type):
+def convert_file(env_name, dataset_type, args):
     # load old file
     dataset_name = f'{env_name}-{dataset_type}-v2' 
     data_path = os.path.join(args.dir, f'{dataset_name}.pkl')
@@ -48,7 +48,7 @@ def convert_file(env_name, dataset_type):
             # rename
             episode_data['terminations'] = np.array(data_['terminals'])
             episode_data['truncations'] = np.array(data_['timeouts'])
-
+            
             episode_data['observations'] = np.array(data_['observations'])
             # add last next_observation to episode_data observations
             episode_data['observations'] = np.concatenate([episode_data['observations'], data_['next_observations'][-1].reshape(1,-1)], axis=0)
