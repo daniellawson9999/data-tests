@@ -58,17 +58,11 @@ def convert_file(game, dataset_type, seed, args):
     N = np_dataset['rewards'].shape[0]
     data_ = collections.defaultdict(list)
     trajectories = []
-
     start_index = 0
     #import pdb; pdb.set_trace()
     for i in tqdm.tqdm(range(N)):
         done = bool(dataset['terminals'][i])
     
-        # for k in ['observations', 'actions', 'rewards', 'terminals']:
-        #     data_[k].append(dataset[k][0])
-        #     temp = dataset[k][1:]
-        #     del dataset[k]
-        #     dataset[k] = temp
 
         if done:
             episode_data = {}
@@ -88,34 +82,30 @@ def convert_file(game, dataset_type, seed, args):
             episode_data['terminations'] = terminations
             episode_data['truncations'] = truncations
 
-            episode_data['observations'] = dataset['observations'][start_index:i+1]#np.array(data_['observations'])
-            #episode_data['observations'] = np.concatenate([dataset['observations'][start_index:i+1], np.expand_dims(dataset['observations'][i],axis=0)], axis=0)
-            # add extra next observatition, is a dummy value
-            #episode_data['observations'] = np.concatenate([episode_data['observations'], np.expand_dims(episode_data['observations'][-1],axis=0)], axis=0)
-
+            episode_data['observations'] = dataset['observations'][start_index:i+2,0,:]#np.array(data_['observations'])
             trajectories.append(episode_data)
             start_index = i + 1
             #data_ = collections.defaultdict(list)
     for key in list(dataset.keys()):
         del dataset[key]
     del dataset
-    import pdb; pdb.set_trace()
-    # padd observations
-    for i in range(len(trajectories)):
-        ep_data = trajectories[i]
-        temp = np.concatenate([ep_data['observations'], np.expand_dims(ep_data['observations'][-1],axis=0)], axis=0)
-        del trajectories[i]['observations']
-        trajectories[i]['observations'] = temp
 
-    import pdb; pdb.set_trace()
+    # pad the last observation in the last trajectory if needed, other trajectories are padded
+    if len(trajectories[-1]['observations']) == len(trajectories[-1]['rewards']):
+        trajectories[-1]['observations'] = np.concatenate([trajectories[-1]['observations'], np.expand_dims(trajectories[-1]['observations'][-1],axis=0)], axis=0)
+
     env_game_name = convert_name(game)
-    env_name = f'ALE/{env_game_name}-v5'
+    prefix = f'ALE/{env_game_name}'
+    env_name = f'{prefix}-v5'
     env = gym.make(env_name)
     #env_name = f'{env_game_name}-{dataset_type}' 
 
-    dataset_id = f'{env_name}-{dataset_type}-s{seed}'
-    
+    #dataset_id = f'{prefix}-{dataset_type}_s{seed}-v0'
 
+    dataset_id = f'{env_game_name}-{dataset_type}_s{seed}-v0'
+    
+    print("saving")
+    # saving
     minari_dataset = minari.create_dataset_from_buffers(
         dataset_id = dataset_id,
         env = env,
