@@ -29,7 +29,7 @@ dataset_types = ['expert']
 #dataset_types = ['medium', 'mixed', 'expert']
 
 seeds = [0]
-#seeds = [0, 1]
+#seeds = [1]
 #seeds = [0, 1, 2, 3, 4]
 
 def download_files(args):

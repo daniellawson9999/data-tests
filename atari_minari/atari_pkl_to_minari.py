@@ -64,8 +64,7 @@ def convert_file(game, dataset_type, seed, args):
     start_index = 0
     #import pdb; pdb.set_trace()
     for i in tqdm.tqdm(range(N)):
-        done = bool(dataset['terminals'][i])
-    
+        done = bool(dataset['terminals'][i])  
 
         if done:
             episode_data = {}
