@@ -84,7 +84,7 @@ episode = dataset.sample_episodes(n_episodes=1)[0]
 
 There are several things to note:
 - dataset.recover_environment() will return the environment without reward_clipping due to issues serializing TransformReward(). To load with environment clipping, recreate the environment with create_atari_env() and pass clip_rewards=True
-- While the dataset is [Optimistic Perspective on Offline Reinforcement Learning](https://arxiv.org/pdf/1907.04543.pdf) is collected with repeat_action_probability=0.25, two recent papers, [Multi-Game Decision Transformers](https://arxiv.org/abs/2205.15241), [Scaled QL](https://arxiv.org/abs/2211.15144). which aim at creating generalist Atari agents use this dataset for training, but set repeat_action_probability=0.0 during evaluation.
-- Both the dataset,and the environment, return un-scaled 84x84 observations, with values ranging from 0 to 255. One should normalize these values before network input, such as by dividing observations by 255 to scale to 0 to 1. 
+- While the dataset [Optimistic Perspective on Offline Reinforcement Learning](https://arxiv.org/pdf/1907.04543.pdf) is collected with repeat_action_probability=0.25, two recent papers, [Multi-Game Decision Transformers](https://arxiv.org/abs/2205.15241), [Scaled QL](https://arxiv.org/abs/2211.15144), which aim at creating generalist Atari agents use this dataset for training, but set repeat_action_probability=0.0 during evaluation.
+- Both the dataset,and the environment, return un-scaled 84x84 observations, with values ranging from 0 to 255. One should normalize these values before network input, such as by dividing observations by 255 to scale to 0 to 1, or use another normalization scheme.
 
 
