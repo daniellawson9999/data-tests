@@ -1,4 +1,5 @@
 import gymnasium as gym
+from gymnasium.wrappers import AtariPreprocessing
 import minari
 import numpy as np
 
@@ -8,6 +9,8 @@ import pickle
 import collections
 import argparse
 import os
+
+from utils import create_atari_env
 
 
 games = ['breakout']
@@ -31,7 +34,7 @@ dataset_types = ['expert']
 seeds = [0]
 #seeds = [0, 1, 2, 3, 4]
 
-max_episode_steps = 108000
+max_episode_steps = 108000 // 4
 
 def convert_name(short):
     return ''.join([w.capitalize() for w in short.split('-')])
@@ -97,7 +100,10 @@ def convert_file(game, dataset_type, seed, args):
     env_game_name = convert_name(game)
     prefix = f'ALE/{env_game_name}'
     env_name = f'{prefix}-v5'
-    env = gym.make(env_name)
+    # env = gym.make(env_name, frameskip=1, repeat_action_probability=0.25)
+    # env = AtariPreprocessing(env, frame_skip=4, noop_max=0)
+    env = create_atari_env(env_name)
+
     #env_name = f'{env_game_name}-{dataset_type}' 
 
     #dataset_id = f'{prefix}-{dataset_type}_s{seed}-v0'

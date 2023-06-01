@@ -1,0 +1,2 @@
+gymnasium[atari]
+gymnasium[other]

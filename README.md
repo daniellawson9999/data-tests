@@ -58,7 +58,33 @@ python atari_to_pkl.py --dir={save_dir}
 where save_dir is the directory to store D4RL .npz files.
 
 
-Converting to Minari is in progress, currently resoling memory issues:
+To convert datasets, run:
 To test, activate Minari environment and run:
 ```bash
 python atari_pkl_to_minari.py.py --dir={save_dir}
+```
+This will create dataset(s), with the name {env_name}-{dataset_type}_s{seed}-v0, where env_name is the name of the environment, e.g. Breakout. Seed and dataset_type follow from https://github.com/takuseno/d4rl-atari, where we test with expert, which contains datasets consisting of the last 1M steps of training. _s{seed} specified which trained agent to use, which is referred to as -v in Takuma's Github, but renamed to seed (_s) as -v is used to specify dataset version in Minari.
+
+Example of loading a dataset:
+
+```python
+import minari
+from atari_minari.utils import create_atari_env
+
+dataset = minari.load_dataset('Breakout-expert_s0-v0')
+
+base_env = dataset.recover_environment() # Recommended to instead build env, as follows:
+env = create_atari_env('ALE/Breakout-v5', repeat_action_probability=0.25, clip_rewards=True)
+# disable action_repeat for some evaluation
+env = create_atari_env('ALE/Breakout-v5', repeat_action_probability=0.0, clip_rewards=True)
+
+# Sample an episode
+episode = dataset.sample_episodes(n_episodes=1)[0]
+```
+
+There are several things to note:
+- dataset.recover_environment() will return the environment without reward_clipping due to issues serializing TransformReward(). To load with environment clipping, recreate the environment with create_atari_env()
+- While the dataset is [Optimistic Perspective on Offline Reinforcement Learning](https://arxiv.org/pdf/1907.04543.pdf) is collected with repeat_action_probability=0.25, two recent papers, [Multi-Game Decision Transformers](https://arxiv.org/abs/2205.15241), [Scaled QL](https://arxiv.org/abs/2211.15144). which aim at creating generalist Atari agents use this dataset for training, but set repeat_action_probability=0.0 during evaluation.
+- Both the dataset,and the environment, return un-scaled 84x84 observations, with values ranging from 0 to 255. One should normalize these values before network input, such as by dividing observations by 255 to scale to 0 to 1. 
+
+
