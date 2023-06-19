@@ -3,7 +3,7 @@ Experimenting with Minari, through importing older D4RL datasets (tested in Pyth
 ## Port D4RL MuJoCo to Minari
 
 Download D4RL and Minari:
- - clone https://github.com/Farama-Foundation/Minari
+ - clone https://github.com/Farama-Foundation/Minari . As Minari is under activate development, this conversion may need to be modified at some point. To use the version of Minari tested, one can use https://github.com/daniellawson9999/Minari. 
  - clone D4RL https://github.com/Farama-Foundation/D4RL
  - Setup separate dependencies, e.g, conda environment for each repo
 
