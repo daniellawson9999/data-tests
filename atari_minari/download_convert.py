@@ -218,7 +218,6 @@ def download_game(game, args):
             # rewards = np.concatenate([rewards, ep_rewards], axis=0)
             # terminals = np.concatenate([terminals, ep_terminals], axis=0)
             # truncations = np.concatenate([truncations, ep_truncations], axis=0)
-        import pdb; pdb.set_trace()
         prefix = f'ALE/{game}'
         env_name = f'{prefix}-v5'
         env = create_atari_env(env_name)
