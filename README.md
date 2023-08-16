@@ -40,9 +40,39 @@ env = dataset.recover_environment() # Deprecated HalfCheetah-v3 environment
 episode = dataset.sample_episodes(n_episodes=1)[0]
 ```
 
+## Port 
+New, port 1% of 1st seed of dqn-replay to Minari.
 
-## Port Atari  to Minari
-in progress
+Minari:
+ - pip install minari==0.4.1
+
+Run:
+```bash
+python download_convert.py --convert
+```
+The dataset name follows the convention {game}-top1-s{index}-v0, which can be set by passing --index, which defaults to 1, matching the seed used by work like [Scaled QL](https://arxiv.org/abs/2211.15144).
+Example of loading a dataset, where Breakout can be replaced with any dataset in ./atari_minari/atari_games.py.
+
+```python
+import minari
+from atari_minari.utils import create_atari_env
+
+dataset = minari.load_dataset('Breakout-top1-s1-v0')
+
+base_env = dataset.recover_environment() # Recommended to instead build env, as follows:
+env = create_atari_env('ALE/Breakout-v5', repeat_action_probability=0.25, clip_rewards=False)
+# disable action_repeat for some evaluation
+env = create_atari_env('ALE/Breakout-v5', repeat_action_probability=0.0, clip_rewards=False)
+
+# Sample an episode
+episode = dataset.sample_episodes(n_episodes=1)[0]
+```
+
+
+
+
+## (OLD) Port Atari  to Minari
+OLD procedure
 
 Download D4RL and Minari:
  - clone https://github.com/Farama-Foundation/Minari (do not have to clone again if already followed setup in previous step)
