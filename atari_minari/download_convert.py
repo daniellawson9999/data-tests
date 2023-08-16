@@ -233,12 +233,18 @@ def download_game(game, args):
             code_permalink = args.code_permalink
         )
         print(f'saved dataset {dataset_id}')
+        del minari_dataset
+        del env
+        del trajectories
+        del current_chunk_data
+
 
 def main(args):
     if args.target_game_only:
         games = [args.game]
     else:
         games = ALL_GAMES
+    #games = games[4:]
     for game in games:
         download_game(game, args)
     
